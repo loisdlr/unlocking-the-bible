@@ -11,6 +11,7 @@ A study guide website for students taking the **Unlocking the Bible** course (Le
 - **Word studies:** Hebrew and Greek words as flip cards
 - **Background:** history and culture behind the lesson
 - **Questions:** common questions with answers
+- **Charts:** every chart from the lesson, viewable full screen
 - **Quiz:** a 6-question self-check
 - **My notes:** private notes, saved in your browser only
 
