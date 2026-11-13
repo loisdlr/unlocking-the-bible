@@ -234,6 +234,20 @@ table.words th{font-weight:600;color:var(--muted);font-size:12.5px}
 .lb .cnt{position:absolute;top:24px;left:0;right:0;text-align:center;color:#86868b;font-size:13px}
 @media (max-width:860px){.lb{padding:60px 8px 70px}.lb .lbp,.lb .lbn{top:auto;bottom:12px;transform:none}}
 
+/* hide / show side menu */
+.brandrow{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.hidebtn{flex:none;border:0;background:transparent;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--muted);margin-top:-2px;transition:background .15s}
+.hidebtn:hover{background:rgba(0,0,0,.06);color:var(--ink)}
+.hidebtn svg,.showbtn svg{width:18px;height:18px}
+.showbtn{display:none;position:fixed;top:16px;left:16px;z-index:25;border:0;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);box-shadow:0 1px 3px rgba(0,0,0,.08),0 6px 20px rgba(0,0,0,.06);color:var(--ink);place-items:center}
+.showbtn:hover{background:#fff}
+@media (min-width:861px){
+  body.navhidden .app{grid-template-columns:minmax(0,1fr)}
+  body.navhidden .side{display:none}
+  body.navhidden .showbtn{display:grid}
+}
+@media (max-width:860px){.hidebtn{display:none}}
+
 .sec{margin-top:18px;padding:30px}
 .sec .sl{display:flex;gap:14px;align-items:baseline;margin-bottom:4px}
 .sec .sl .sx{font-family:var(--serif);font-weight:600;color:var(--faint);font-size:15px;min-width:20px}
@@ -249,9 +263,10 @@ footer{margin-top:60px;color:var(--faint);font-size:12.5px;border-top:1px solid 
 </head>
 <body>
 <div class="mobilebar"><button id="menuBtn" aria-label="Menu">☰</button><b style="font-family:var(--serif)">Unlocking the Bible</b><span style="width:22px"></span></div>
+<button class="showbtn" onclick="setNav(false)" title="Show menu" aria-label="Show menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
 <div class="app">
   <aside class="side" id="side">
-    <div class="brand">Unlocking the Bible<small>Student Study Guide</small></div>
+    <div class="brandrow"><div class="brand">Unlocking the Bible<small>Student Study Guide</small></div><button class="hidebtn" onclick="setNav(true)" title="Hide menu" aria-label="Hide menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button></div>
     <input class="search" id="q" placeholder="Search…  (/)">
     <div class="navsec">Course</div>
     <div class="nav" id="navTop"></div>
@@ -444,6 +459,10 @@ function doSearch(q){
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();if(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();$('#q').focus()}});
 $('#q').addEventListener('input',e=>{clearTimeout(window._sq);window._sq=setTimeout(()=>doSearch(e.target.value),200)});
 $('#menuBtn').onclick=()=>$('#side').classList.toggle('open');
+
+function setNav(h){document.body.classList.toggle('navhidden',h);store.set('navhidden',h)}
+setNav(store.get('navhidden',false));
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='\\'){e.preventDefault();setNav(!document.body.classList.contains('navhidden'))}});
 window.addEventListener('hashchange',route);
 route();
 </script>
