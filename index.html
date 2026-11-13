@@ -257,6 +257,58 @@ table.words th{font-weight:600;color:var(--muted);font-size:12.5px}
 .pres ol.pref li{font-size:clamp(24px,3vw,42px);font-weight:600;letter-spacing:-.025em;line-height:1.3;margin:3vh 0}
 .pres .pprog{color:#86868b;font-size:13px;margin-right:6px}
 
+/* ---------- responsive polish ---------- */
+.scrim{display:none}
+.tabs{-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+img{max-width:100%}
+@media (hover:none){.lcard:hover,.fig:hover{transform:none}}
+@media (max-width:860px){
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:35;opacity:0;pointer-events:none;transition:opacity .25s;display:block}
+  .side.open~.scrim,body.menuopen .scrim{opacity:1;pointer-events:auto}
+  .search,textarea,input.blank{font-size:16px}
+  .tabs{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}
+  .big{font-size:20px}
+  h2{font-size:21px;margin:34px 0 12px}
+  .sec{padding:22px 20px}
+  .sec h2{font-size:21px}
+  .keyrow .kt{font-size:18px}
+  .layer{padding:14px 15px}
+  .lb{padding:56px 10px 120px}
+  .lb .cap{bottom:70px;padding:0 16px;font-size:13px}
+  .lb .lbp{left:calc(50% - 56px);bottom:14px;top:auto;transform:none}
+  .lb .lbn{right:calc(50% - 56px);bottom:14px;top:auto;transform:none}
+  .drawer{right:0;top:auto;bottom:0;left:0;width:100%;max-height:85vh;border-radius:22px 22px 0 0;transform:translateY(105%);padding:26px 20px calc(26px + env(safe-area-inset-bottom))}
+  .drawer.open{transform:none}
+  .pres{padding:16px 18px calc(16px + env(safe-area-inset-bottom))}
+  .pres .ptop{flex-direction:column;align-items:flex-start;gap:10px;font-size:12px}
+  .pres .ptop .btn{padding:6px 12px;font-size:12.5px}
+  .pres h2{font-size:30px;margin-bottom:2vh}
+  .pres li{font-size:18px}
+  .pres .pkey{font-size:24px}
+  .pres ol.pref li{font-size:22px}
+  .pres .pchart{max-height:52vh}
+  .toast{bottom:calc(20px + env(safe-area-inset-bottom))}
+}
+@media (min-width:861px) and (max-height:820px){
+  .pres{padding:3vh 6vw}
+  .pres .pchart{max-height:62vh}
+}
+.pres .pbody{min-height:0;overflow-y:auto}
+.pres .pnav,.pres .ptop{flex:none}
+.pres .pnav{padding-top:12px}
+@media (max-width:860px){.pres .pbody{justify-content:flex-start;padding-top:3vh}}
+.pres .pbody{justify-content:flex-start!important;padding-top:0}
+.pres .pbody>:first-child{margin-top:auto}
+.pres .pbody>:last-child{margin-bottom:auto}
+.pres .pbody ul{padding-left:clamp(26px,2.6vw,44px)!important}
+.pres .pbody ol.pref{padding-left:clamp(30px,3vw,52px)}
+.pres .pbody>:first-child,.pres .pbody>:last-child{margin-top:0;margin-bottom:0}
+.pres .pin{margin:auto 0;width:100%}
+.pres .pin .pchartwrap{flex:none}
+.pres .pbody>.pin{margin:auto 0}
+@media (max-width:860px){.pres .pbody>.pin{margin:0 0 auto}}
+
 .sec{margin-top:18px;padding:30px}
 .sec .sl{display:flex;gap:14px;align-items:baseline;margin-bottom:4px}
 .sec .sl .sx{font-family:var(--serif);font-weight:600;color:var(--faint);font-size:15px;min-width:20px}
@@ -284,6 +336,7 @@ footer{margin-top:60px;color:var(--faint);font-size:12.5px;border-top:1px solid 
   </aside>
   <main id="main"></main>
 </div>
+<div class="scrim" onclick="document.getElementById('side').classList.remove('open');document.body.classList.remove('menuopen')"></div>
 <div class="drawer" id="drawer"><button class="x" onclick="closeDrawer()" aria-label="Close">×</button><div id="drawerBody"></div></div>
 <div class="lb" id="lb"></div>
 <div class="toast" id="toast"></div>
@@ -320,7 +373,7 @@ function renderNav(){
   $('#navTop').innerHTML=[['home','⌂','Start here'],['scripture','✎','Scripture index']].map(([v,i,t])=>`<button class="${state.view===v?'on':''}" onclick="go('${v}')"><span class="num">${i}</span><span class="lt">${t}</span></button>`).join('');
   $('#navL').innerHTML=L.map(l=>`<button class="${state.view==='lesson'&&state.lesson===l.n?'on':''}" onclick="go('lesson-${l.n}')"><span class="num ${studied[l.n]?'done':''}">${l.n}</span><span class="lt">${esc(l.title)}</span></button>`).join('');
 }
-function go(h){if(location.hash.slice(1)===h)route();else location.hash=h;$('#side').classList.remove('open')}
+function go(h){if(location.hash.slice(1)===h)route();else location.hash=h;$('#side').classList.remove('open');document.body.classList.remove('menuopen')}
 const TABS=[['study','Study'],['charts','Charts'],['keys','Key points'],['words','Word studies'],['background','Background'],['qa','Questions'],['quiz','Quiz'],['notes','My notes']];
 function route(){
   const h=location.hash.slice(1)||'home';
@@ -467,7 +520,12 @@ function doSearch(q){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();if(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();$('#q').focus()}});
 $('#q').addEventListener('input',e=>{clearTimeout(window._sq);window._sq=setTimeout(()=>doSearch(e.target.value),200)});
-$('#menuBtn').onclick=()=>$('#side').classList.toggle('open');
+$('#menuBtn').onclick=()=>{$('#side').classList.toggle('open');document.body.classList.toggle('menuopen',$('#side').classList.contains('open'))};
+/* swipe for presenter and chart viewer */
+(function(){let x0=null,y0=null;document.addEventListener('touchstart',e=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY},{passive:true});
+document.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.5)return;const d=dx<0?1:-1;
+ if($('#lb').classList.contains('open'))stepLB(d);else if($('#pres')&&$('#pres').classList.contains('open'))presStep(d)},{passive:true})})();
+
 
 function setNav(h){document.body.classList.toggle('navhidden',h);store.set('navhidden',h)}
 setNav(store.get('navhidden',false));
